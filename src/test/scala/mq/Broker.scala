@@ -9,8 +9,8 @@ class Broker extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case WorkRequest =>
-      // pull from mq
+      // pull from request queue
       worker ! Request("work")
-    case response: Response => // push to mq
+    case response: Response => // push to response queue
   }
 }
