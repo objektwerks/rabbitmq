@@ -2,7 +2,11 @@ package mq
 
 import akka.actor.{Actor, ActorRef}
 
-class Broker(queue: ActorRef, worker: ActorRef) extends Actor {
+object WorkRequest
+final case class Request(message: String)
+final case class Response(message: String)
+
+class Broker(worker: ActorRef) extends Actor {
   override def receive: Receive = {
     case WorkRequest =>
       // pull from request queue
