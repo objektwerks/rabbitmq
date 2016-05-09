@@ -1,8 +1,8 @@
 package mq
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.Actor
 
-class Worker extends Actor with ActorLogging {
+class Worker extends Actor {
   override def receive: Receive = {
     case request: Request => sender ! Response(request.message)
   }
