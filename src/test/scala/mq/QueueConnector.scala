@@ -12,10 +12,10 @@ class QueueConnector(configName: String) {
 
   val channel = connection.createChannel
   val exchange = config.getString("amqp.channel.exchange")
-  val exchangeType = config.getString("amqp.channel.exchange.type")
-  val routingKey = config.getString("amqp.channel.routing.key")
+  val exchangeType = config.getString("amqp.channel.exchangeType")
+  val routingKey = config.getString("amqp.channel.routingKey")
   val queue = config.getString("amqp.channel.queue")
-  val autoAck = config.getBoolean("amqp.channel.auto.ack")
+  val autoAck = config.getBoolean("amqp.channel.autoAck")
   channel.exchangeDeclare(exchange, exchangeType, true)
   channel.queueDeclare(queue, true, false, false, null)
   channel.queueBind(queue, exchange, routingKey)
