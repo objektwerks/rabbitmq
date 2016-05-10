@@ -13,6 +13,7 @@ class QueueConnector(config: Config) {
   val exchangeType = config.getString("amqp.channel.exchange.type")
   val routingKey = config.getString("amqp.channel.routing.key")
   val queue = config.getString("amqp.channel.queue")
+  val autoAck = config.getBoolean("amqp.channel.auto.ack")
   channel.exchangeDeclare(exchange, exchangeType, true)
   channel.queueDeclare(queue, true, false, false, null)
   channel.queueBind(queue, exchange, routingKey)
@@ -21,7 +22,7 @@ class QueueConnector(config: Config) {
 
   def push(message: String): Unit = channel.basicPublish(exchange, routingKey, null, message.getBytes())
 
-  def pull: GetResponse = channel.basicGet(queue, false)
+  def pull: GetResponse = channel.basicGet(queue, autoAck)
 
   def ack(deliveryTag: Long): Unit = channel.basicAck(deliveryTag, false)
 
