@@ -12,7 +12,7 @@ class Broker extends Actor {
       val request = requestQueue.pull.get
       worker ! Request(id = request.getEnvelope.getDeliveryTag, message = new String(request.getBody))
     case response: Response =>
-      responseQueue.push(response.message)
       requestQueue.ack(response.id)
+      responseQueue.push(response.message)
   }
 }

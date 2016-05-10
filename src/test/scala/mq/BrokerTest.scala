@@ -15,10 +15,6 @@ class BrokerTest extends FunSuite  with BeforeAndAfterAll {
   val requestQueue = new QueueConnector("request.queue.conf")
   val responseQueue = new QueueConnector("response.queue.conf")
 
-  override protected def beforeAll(): Unit = {
-    requestQueue.push("test.request")
-  }
-
   override protected def afterAll(): Unit = {
     requestQueue.close()
     responseQueue.close()
@@ -28,7 +24,6 @@ class BrokerTest extends FunSuite  with BeforeAndAfterAll {
   test("broker") {
     requestQueue.push("test.request")
     broker ! WorkRequest
-    Thread.sleep(3000)
     // assert(requestQueue.pull.isEmpty)
     assert(responseQueue.pull.nonEmpty)
   }
