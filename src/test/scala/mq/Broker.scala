@@ -2,10 +2,8 @@ package mq
 
 import akka.actor.{Actor, Props}
 
-class Broker extends Actor {
+class Broker(requestQueue: QueueConnector, responseQueue: QueueConnector) extends Actor {
   val worker = context.actorOf(Props[Worker])
-  val requestQueue = new QueueConnector("request.queue.conf")
-  val responseQueue = new QueueConnector("response.queue.conf")
 
   override def receive: Receive = {
     case WorkRequest =>

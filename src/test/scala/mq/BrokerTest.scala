@@ -10,21 +10,21 @@ import scala.concurrent.duration._
 
 class BrokerTest extends FunSuite  with BeforeAndAfterAll {
   implicit val timeout = Timeout(1 second)
-  val system: ActorSystem = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
-  val broker = system.actorOf(Props[Broker])
   val requestQueue = new QueueConnector("request.queue.conf")
   val responseQueue = new QueueConnector("response.queue.conf")
+  val system: ActorSystem = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
+  val broker = system.actorOf(Props(new Broker(requestQueue, responseQueue)))
 
   override protected def afterAll(): Unit = {
+    Await.result(system.terminate(), 1 second)
     requestQueue.close()
     responseQueue.close()
-    Await.result(system.terminate(), 1 second)
   }
 
   test("broker") {
     requestQueue.push("test.request")
     broker ! WorkRequest
-    // assert(requestQueue.pull.isEmpty)
+    assert(requestQueue.pull.isEmpty)
     assert(responseQueue.pull.nonEmpty)
   }
 }
