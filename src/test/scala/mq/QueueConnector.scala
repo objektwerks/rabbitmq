@@ -22,7 +22,7 @@ class QueueConnector(configName: String) {
 
   def close(): Unit = connection.close()
 
-  def push(message: String): Unit = channel.basicPublish(exchange, routingKey, null, message.getBytes())
+  def push(message: String): Unit = channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
 
   def pull: Option[GetResponse] = Option(channel.basicGet(queue, autoAck))
 
