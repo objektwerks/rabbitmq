@@ -22,7 +22,7 @@ class QueueConnector(config: Config) {
 
   def push(message: String): Unit = channel.basicPublish(exchange, routingKey, null, message.getBytes())
 
-  def pull: GetResponse = channel.basicGet(queue, autoAck)
+  def pull: Option[GetResponse] = Option(channel.basicGet(queue, autoAck))
 
   def ack(deliveryTag: Long): Unit = channel.basicAck(deliveryTag, false)
 
