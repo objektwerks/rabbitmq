@@ -1,7 +1,9 @@
 package mq
 
+import java.util.UUID
+
 object WorkRequest
 
-final case class Request(message: String)
+case class Request(correlationId: String = UUID.randomUUID.toString, message: String)
 
-final case class Response(message: String)
+case class Response(correlationId: String, message: String)
