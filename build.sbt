@@ -2,7 +2,6 @@ name := "objektwerks.rabbitmq"
 version := "1.0"
 scalaVersion := "2.11.8"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
-resolvers += "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
 libraryDependencies ++= {
   val akkaVersion = "2.4.4"
   Seq(
