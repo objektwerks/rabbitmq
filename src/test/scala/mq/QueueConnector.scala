@@ -1,9 +1,11 @@
 package mq
 
 import com.rabbitmq.client._
-import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
 
-class QueueConnector(config: Config) {
+class QueueConnector(configName: String) {
+  val config = ConfigFactory.load(configName)
+
   val factory = new ConnectionFactory()
   factory.setUri(config.getString("amqp.url"))
   val connection = factory.newConnection()
