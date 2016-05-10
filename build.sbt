@@ -9,7 +9,6 @@ libraryDependencies ++= {
     "com.typesafe" % "config" % "1.3.0",
     "com.typesafe.akka" % "akka-actor_2.11" % akkaVersion,
     "com.typesafe.akka" % "akka-slf4j_2.11" % akkaVersion,
-    "com.thenewmotion.akka" % "akka-rabbitmq_2.11" % "2.3",
     "ch.qos.logback" % "logback-classic" % "1.1.3",
     "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test"
   )
