@@ -10,7 +10,7 @@ class Broker(requestQueue: QueueConnector, responseQueue: QueueConnector) extend
       val request = requestQueue.pull.get
       worker ! Request(id = request.getEnvelope.getDeliveryTag, message = new String(request.getBody))
     case response: Response =>
-      requestQueue.ack(response.id)
       responseQueue.push(response.message)
+      requestQueue.ack(response.id)
   }
 }
