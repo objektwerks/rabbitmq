@@ -10,7 +10,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class BrokerTest extends FunSuite  with BeforeAndAfterAll {
+class BrokerTest extends FunSuite with BeforeAndAfterAll {
   implicit val timeout = Timeout(1 second)
   val system: ActorSystem = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
   val broker = system.actorOf(Props[Broker])
@@ -18,11 +18,14 @@ class BrokerTest extends FunSuite  with BeforeAndAfterAll {
   override protected def beforeAll(): Unit = {
     val requestQueue = new QueueConnector("request.queue.conf")
     val counter = new AtomicInteger()
+    val delivered = new AtomicInteger()
     for (i <- 1 to 100) {
       val message = s"test.request: ${counter.incrementAndGet}"
-      requestQueue.push(message)
+      val wasDelivered = requestQueue.push(message)
+      if (wasDelivered) delivered.incrementAndGet()
     }
     requestQueue.close()
+    assert(delivered.intValue() == 100)
   }
 
   override protected def afterAll(): Unit = {

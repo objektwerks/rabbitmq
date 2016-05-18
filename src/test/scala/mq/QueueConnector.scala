@@ -18,11 +18,11 @@ class QueueConnector(configName: String) {
   val connection = createConnection
   val channel = createChannel
 
-  def push(message: String): Unit = {
+  def push(message: String): Boolean = {
     if (isConnectionAndChannelOpen) {
       channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
-      if (!channel.waitForConfirms(publishConfirmationTimeout)) throw new IllegalStateException(publishConfirmationTimedOut)
-    }
+      channel.waitForConfirms(publishConfirmationTimeout)
+    } else false
   }
 
   def pull: Option[GetResponse] = {

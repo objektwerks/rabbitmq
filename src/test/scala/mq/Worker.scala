@@ -10,7 +10,7 @@ class Worker extends Actor with ActorLogging {
   override def receive: Receive = {
     case request: Request =>
       val message = s"test.response: ${counter.incrementAndGet}"
+      log.debug(s"Worker sending Response: $message")
       sender ! Response(request.id, message)
-      log.debug(message)
   }
 }
