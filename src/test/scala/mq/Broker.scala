@@ -3,7 +3,7 @@ package mq
 import akka.actor.{Actor, ActorLogging, Props}
 
 class Broker extends Actor with ActorLogging {
-  val worker = context.actorOf(Props[Worker])
+  val worker = context.actorOf(Props[Worker], name = "worker")
   val requestQueue = new QueueConnector("request.queue.conf")
   val responseQueue = new QueueConnector("response.queue.conf")
 
