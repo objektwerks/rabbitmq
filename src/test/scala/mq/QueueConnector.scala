@@ -18,15 +18,15 @@ class QueueConnector(configName: String) {
   val connection = createConnection
   val channel = createChannel
 
+  def pull: Option[GetResponse] = {
+    if (isConnectionAndChannelOpen) Option(channel.basicGet(queue, autoAck)) else None
+  }
+
   def push(message: String): Boolean = {
     if (isConnectionAndChannelOpen) {
       channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
       channel.waitForConfirms(publishConfirmationTimeout)
     } else false
-  }
-
-  def pull: Option[GetResponse] = {
-    if (isConnectionAndChannelOpen) Option(channel.basicGet(queue, autoAck)) else None
   }
 
   def ack(deliveryTag: Long): Unit = {

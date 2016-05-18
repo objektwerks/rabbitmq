@@ -15,25 +15,42 @@ class BrokerTest extends FunSuite with BeforeAndAfterAll {
   val system = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
   val broker = system.actorOf(Props[Broker], name = "broker")
 
-  override protected def beforeAll(): Unit = {
-    val requestQueue = new QueueConnector("request.queue.conf")
-    val counter = new AtomicInteger()
-    val delivered = new AtomicInteger()
-    for (i <- 1 to 100) {
-      val message = s"test.request: ${counter.incrementAndGet}"
-      val wasDelivered = requestQueue.push(message)
-      if (wasDelivered) delivered.incrementAndGet()
-    }
-    requestQueue.close()
-    assert(delivered.intValue() == 100)
-  }
-
   override protected def afterAll(): Unit = {
     Await.result(system.terminate(), 3 seconds)
   }
 
+  test("amqp") {
+    pushMessagesToRequestQueue()
+    pullMessagesFromRequestQueue()
+    Thread.sleep(3000)
+  }
+
   test("broker") {
+    pushMessagesToRequestQueue()
     broker ! WorkRequest
     Thread.sleep(3000)
+  }
+
+  private def pushMessagesToRequestQueue(): Unit = {
+    val requestQueue = new QueueConnector("request.queue.conf")
+    val counter = new AtomicInteger()
+    val confirmed = new AtomicInteger()
+    for (i <- 1 to 100) {
+      val message = s"test.request: ${counter.incrementAndGet}"
+      val isComfirmed = requestQueue.push(message)
+      if (isComfirmed) confirmed.incrementAndGet
+    }
+    requestQueue.close()
+    assert(confirmed.intValue == 100)
+  }
+
+  private def pullMessagesFromRequestQueue(): Unit = {
+    val requestQueue = new QueueConnector("request.queue.conf")
+    val pulled = new AtomicInteger()
+    for (i <- 1 to 100) {
+      if(requestQueue.pull.nonEmpty) pulled.incrementAndGet
+    }
+    requestQueue.close()
+    assert(pulled.intValue == 100)
   }
 }
