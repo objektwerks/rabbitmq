@@ -26,4 +26,3 @@ scalacOptions ++= Seq(
 )
 fork in test := true
 javaOptions += "-server -Xss1m -Xmx2g"
-logLevel := Level.Info

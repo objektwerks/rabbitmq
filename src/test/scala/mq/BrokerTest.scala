@@ -1,5 +1,7 @@
 package mq
 
+import java.util.concurrent.atomic.AtomicInteger
+
 import akka.actor._
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
@@ -13,12 +15,22 @@ class BrokerTest extends FunSuite  with BeforeAndAfterAll {
   val system: ActorSystem = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
   val broker = system.actorOf(Props[Broker])
 
+  override protected def beforeAll(): Unit = {
+    val requestQueue = new QueueConnector("request.queue.conf")
+    val counter = new AtomicInteger()
+    for (i <- 1 to 100) {
+      val message = s"test.request: ${counter.incrementAndGet}"
+      requestQueue.push(message)
+    }
+    requestQueue.close()
+  }
+
   override protected def afterAll(): Unit = {
-    Await.result(system.terminate(), 1 second)
+    Await.result(system.terminate(), 3 seconds)
   }
 
   test("broker") {
-    Thread.sleep(1000)
     broker ! WorkRequest
+    Thread.sleep(3000)
   }
 }

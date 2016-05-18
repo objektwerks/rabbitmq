@@ -48,6 +48,7 @@ class QueueConnector(configName: String) {
 
   private def createConnection: Connection = {
     val factory = new ConnectionFactory()
+    require(url.nonEmpty)
     factory.setUri(url)
     factory.newConnection()
   }
