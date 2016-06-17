@@ -10,7 +10,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class BrokerTest extends FunSuite with BeforeAndAfterAll {
+class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
   implicit val timeout = Timeout(1 second)
   val system = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
   val broker = system.actorOf(Props[Broker], name = "broker")

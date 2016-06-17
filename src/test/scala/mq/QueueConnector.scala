@@ -1,5 +1,7 @@
 package mq
 
+import java.net.ConnectException
+
 import com.rabbitmq.client._
 import com.typesafe.config.ConfigFactory
 
@@ -43,7 +45,7 @@ class QueueConnector(configName: String) {
   }
 
   private def isConnectionAndChannelOpen: Boolean = {
-    if (connection.isOpen && channel.isOpen) true else throw new IllegalStateException(connectionClosed)
+    if (connection.isOpen && channel.isOpen) true else throw new ConnectException(connectionClosed)
   }
 
   private def createConnection: Connection = {
@@ -61,6 +63,6 @@ class QueueConnector(configName: String) {
       channel.queueBind(queue, exchange, routingKey)
       channel.confirmSelect()
       channel
-    } else throw new IllegalStateException(connectionClosed)
+    } else throw new ConnectException(connectionClosed)
   }
 }
