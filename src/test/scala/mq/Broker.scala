@@ -13,18 +13,19 @@ class Broker extends Actor with ActorLogging {
         case Some(item) =>
           val id = item.getEnvelope.getDeliveryTag
           val message = new String(item.getBody)
-          log.debug(s"Broker sending queue request: $id : $message")
+          log.debug("request: {}", id)
           worker ! Request(id, message)
         case None =>
-          log.debug(s"Broker processed all requests / responses, and is shutting down...")
+          log.debug(s"broker shutting down...")
           require(requestQueue.pull.isEmpty)
           context stop worker
           context stop self
       }
     case Response(id, message) =>
-      log.debug(s"Broker receiving worker response: $id - $message")
-      val wasDelivered = responseQueue.push(message)
-      if (wasDelivered) requestQueue.ack(id)
+      log.debug(s"response: {}", id)
+      val wasPushed = responseQueue.push(message)
+      require(wasPushed)
+      requestQueue.ack(id)
       self ! WorkRequest
   }
 
