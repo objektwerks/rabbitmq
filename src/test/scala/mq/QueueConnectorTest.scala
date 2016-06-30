@@ -27,7 +27,7 @@ class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
 
   test("broker") {
     pushMessagesToRequestQueue(10)
-    broker ! WorkRequest
+    broker ! PullRequest
     Thread.sleep(3000)
   }
 
