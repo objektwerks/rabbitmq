@@ -16,13 +16,13 @@ class Broker extends Actor with ActorLogging {
           log.debug("request: {}", id)
           worker ! Request(id, message)
         case None =>
-          log.debug(s"broker shutting down...")
+          log.debug("broker shutting down...")
           require(requestQueue.pull.isEmpty)
           context stop worker
           context stop self
       }
     case Response(id, message) =>
-      log.debug(s"response: {}", id)
+      log.debug("response: {}", id)
       val wasPushed = responseQueue.push(message)
       require(wasPushed)
       requestQueue.ack(id)
