@@ -12,7 +12,7 @@ class Broker extends Actor with ActorLogging {
       requestQueue.pull match {
         case Some(item) =>
           val id = item.getEnvelope.getDeliveryTag
-          val message = new String(item.getBody)
+          val message = new String(item.getBody, "UTF-8")
           log.debug("request: {}", id)
           worker ! Request(id, message)
         case None =>
