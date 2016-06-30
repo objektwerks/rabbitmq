@@ -31,26 +31,26 @@ class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
     Thread.sleep(3000)
   }
 
-  private def pushMessagesToRequestQueue(numberOfMessages: Int): Unit = {
+  private def pushMessagesToRequestQueue(number: Int): Unit = {
     val requestQueue = new QueueConnector("test.request.queue.conf")
     val counter = new AtomicInteger()
     val confirmed = new AtomicInteger()
-    for (i <- 1 to numberOfMessages) {
+    for (i <- 1 to number) {
       val message = s"test.request: ${counter.incrementAndGet}"
       val isComfirmed = requestQueue.push(message)
       if (isComfirmed) confirmed.incrementAndGet
     }
     requestQueue.close()
-    assert(confirmed.intValue == numberOfMessages)
+    assert(confirmed.intValue == number)
   }
 
-  private def pullMessagesFromRequestQueue(numberOfMessages: Int): Unit = {
+  private def pullMessagesFromRequestQueue(number: Int): Unit = {
     val requestQueue = new QueueConnector("test.request.queue.conf")
     val pulled = new AtomicInteger()
-    for (i <- 1 to numberOfMessages) {
+    for (i <- 1 to number) {
       if(requestQueue.pull.nonEmpty) pulled.incrementAndGet
     }
     requestQueue.close()
-    assert(pulled.intValue == numberOfMessages)
+    assert(pulled.intValue == number)
   }
 }
