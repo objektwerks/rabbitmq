@@ -44,6 +44,7 @@ class QueueConnector(configName: String) {
   def close(): Unit = connector.close()
 
   private def connect(): Connector = {
+    if (connector != null) connector.close()
     val connection = createConnection()
     val channel = createChannel(connection)
     new Connector(connection, channel)
@@ -54,7 +55,6 @@ class QueueConnector(configName: String) {
   private def createConnection(): Connection = {
     val factory = new ConnectionFactory()
     factory.setUri(url)
-    factory.setConnectionTimeout(60000)
     factory.newConnection()
   }
 
