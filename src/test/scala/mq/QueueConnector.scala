@@ -10,7 +10,7 @@ private[this] class Connector(val connection: Connection, val channel: Channel) 
 
 class QueueConnector(configName: String) {
   private val config = ConfigFactory.load(configName)
-  private val url = config.getString("amqp.factory.url")
+  private val url = config.getString("amqp.connection.url")
   private val exchange = config.getString("amqp.channel.exchange")
   private val exchangeType = config.getString("amqp.channel.exchangeType")
   private val routingKey = config.getString("amqp.channel.routingKey")

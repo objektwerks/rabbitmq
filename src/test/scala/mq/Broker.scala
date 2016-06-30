@@ -4,8 +4,8 @@ import akka.actor.{Actor, ActorLogging, Props}
 
 class Broker extends Actor with ActorLogging {
   val worker = context.actorOf(Props[Worker], name = "worker")
-  val requestQueue = new QueueConnector("request.queue.conf")
-  val responseQueue = new QueueConnector("response.queue.conf")
+  val requestQueue = new QueueConnector("test.request.queue.conf")
+  val responseQueue = new QueueConnector("test.response.queue.conf")
 
   override def receive: Receive = {
     case WorkRequest =>
