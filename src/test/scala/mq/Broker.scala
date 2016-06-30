@@ -11,7 +11,9 @@ class Broker extends Actor with ActorLogging {
   override def receive: Receive = {
     case PullRequest => queue ! PullRequest
     case request: Request => worker ! request
-    case response: Response => queue ! response
+    case response: Response =>
+      queue ! response
+      queue ! PullRequest
     case Shutdown =>
       log.debug("broker shutting down...")
       context stop queue
