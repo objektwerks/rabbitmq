@@ -1,34 +1,24 @@
 package mq
 
 import com.rabbitmq.client._
-import com.typesafe.config.ConfigFactory
 
 private[this] class Connector(val connection: Connection, val channel: Channel) {
   def isOpen: Boolean = if (connection.isOpen && channel.isOpen) true else false
   def close(): Unit = if (connection.isOpen) connection.close()
 }
 
-class QueueConnector(configName: String) {
-  private val config = ConfigFactory.load(configName)
-  private val url = config.getString("amqp.connection.url")
-  private val exchange = config.getString("amqp.channel.exchange")
-  private val exchangeType = config.getString("amqp.channel.exchangeType")
-  private val routingKey = config.getString("amqp.channel.routingKey")
-  private val queue = config.getString("amqp.channel.queue")
-  private val durable = config.getBoolean("amqp.channel.durable")
-  private val autoAck = config.getBoolean("amqp.channel.autoAck")
-  private val publishConfirmationTimeout = config.getInt("amqp.channel.publishConfirmationTimeout")
+class QueueConnector(conf: QueueConnectorConf) {
   private var connector = connect()
 
   def pull: Option[GetResponse] = {
     checkConnector()
-    Option(connector.channel.basicGet(queue, autoAck))
+    Option(connector.channel.basicGet(conf.queueName, conf.autoAck))
   }
 
   def push(message: String): Boolean = {
     checkConnector()
-    connector.channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
-    connector.channel.waitForConfirms(publishConfirmationTimeout)
+    connector.channel.basicPublish(conf.exchangeName, conf.routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
+    connector.channel.waitForConfirms(conf.publishConfirmationTimeout)
   }
 
   def ack(deliveryTag: Long): Unit = {
@@ -54,15 +44,15 @@ class QueueConnector(configName: String) {
 
   private def createConnection(): Connection = {
     val factory = new ConnectionFactory()
-    factory.setUri(url)
+    factory.setUri(conf.url)
     factory.newConnection()
   }
 
   private def createChannel(connection: Connection): Channel = {
     val channel = connection.createChannel
-    channel.exchangeDeclare(exchange, exchangeType, true)
-    channel.queueDeclare(queue, durable, false, false, null)
-    channel.queueBind(queue, exchange, routingKey)
+    channel.exchangeDeclare(conf.exchangeName, conf.exchangeType, true)
+    channel.queueDeclare(conf.queueName, conf.isQueueDurable, false, false, null)
+    channel.queueBind(conf.queueName, conf.exchangeName, conf.routingKey)
     channel.confirmSelect()
     channel
   }

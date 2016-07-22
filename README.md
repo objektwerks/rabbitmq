@@ -16,7 +16,7 @@ Stop
 
 Test
 ----
-1. sbt clean test
+1. sbt clean it:test
 
 Admin
 -----

@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import akka.actor._
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import scala.concurrent.Await
@@ -12,6 +14,9 @@ import scala.concurrent.duration._
 
 class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
   implicit val timeout = Timeout(1 second)
+  val queueConf = ConfigFactory.load("test.request.queue.conf").as[QueueConnectorConf]("queue")
+  val queue = new QueueConnector(queueConf)
+
   val system = ActorSystem.create("queue", ConfigFactory.load("test.conf"))
   val broker = system.actorOf(Props[Broker], name = "broker")
 
@@ -32,25 +37,23 @@ class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
   }
 
   private def pushMessagesToRequestQueue(number: Int): Unit = {
-    val requestQueue = new QueueConnector("test.request.queue.conf")
     val counter = new AtomicInteger()
     val confirmed = new AtomicInteger()
     for (i <- 1 to number) {
       val message = s"test.request: ${counter.incrementAndGet}"
-      val isComfirmed = requestQueue.push(message)
+      val isComfirmed = queue.push(message)
       if (isComfirmed) confirmed.incrementAndGet
     }
-    requestQueue.close()
+    queue.close()
     assert(confirmed.intValue == number)
   }
 
   private def pullMessagesFromRequestQueue(number: Int): Unit = {
-    val requestQueue = new QueueConnector("test.request.queue.conf")
     val pulled = new AtomicInteger()
     for (i <- 1 to number) {
-      if(requestQueue.pull.nonEmpty) pulled.incrementAndGet
+      if(queue.pull.nonEmpty) pulled.incrementAndGet
     }
-    requestQueue.close()
+    queue.close()
     assert(pulled.intValue == number)
   }
 }
