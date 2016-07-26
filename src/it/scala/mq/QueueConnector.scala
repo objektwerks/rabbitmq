@@ -34,7 +34,6 @@ class QueueConnector(conf: QueueConnectorConf) {
   def close(): Unit = connector.close()
 
   private def connect(): Connector = {
-    if (connector != null) connector.close()
     val connection = createConnection()
     val channel = createChannel(connection)
     new Connector(connection, channel)
