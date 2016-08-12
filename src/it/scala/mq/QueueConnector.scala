@@ -30,6 +30,7 @@ class QueueConsumer(connector: QueueConnector) extends Consumer {
 class QueueConnector(conf: QueueConnectorConf) {
   private var connector = connect()
 
+  /** A prefetchCount of 0 equals unlimited message retrieval!!! */
   def consume(prefetchCount: Int, consumer: Consumer): Unit = {
     checkConnector()
     connector.channel.basicQos(prefetchCount)
