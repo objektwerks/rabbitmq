@@ -10,6 +10,11 @@ private[this] class Connector(val connection: Connection, val channel: Channel) 
 class QueueConnector(conf: QueueConnectorConf) {
   private var connector = connect()
 
+  def consume(consumer: Consumer): Unit = {
+    checkConnector()
+    connector.channel.basicConsume(conf.queueName, conf.autoAck, consumer)
+  }
+
   def pull: Option[GetResponse] = {
     checkConnector()
     Option(connector.channel.basicGet(conf.queueName, conf.autoAck))
@@ -24,6 +29,11 @@ class QueueConnector(conf: QueueConnectorConf) {
   def ack(deliveryTag: Long): Unit = {
     checkConnector()
     connector.channel.basicAck(deliveryTag, false)
+  }
+
+  def ackAllMessages(deliveryTag: Long): Unit = {
+    checkConnector()
+    connector.channel.basicAck(deliveryTag, true)
   }
 
   def nack(deliveryTag: Long): Unit = {
