@@ -1,5 +1,6 @@
 package mq
 
+import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client._
 
 private[this] class Connector(val connection: Connection, val channel: Channel) {
@@ -7,11 +8,31 @@ private[this] class Connector(val connection: Connection, val channel: Channel) 
   def close(): Unit = if (connection.isOpen) connection.close()
 }
 
+class QueueConsumer(connector: QueueConnector) extends Consumer {
+  override def handleDelivery(consumerTag: String,
+                              envelope: Envelope,
+                              properties: BasicProperties,
+                              body: Array[Byte]): Unit = {
+    throw new RuntimeException("Must override handleDelivery method!")
+  }
+
+  override def handleCancel(consumerTag: String): Unit = {}
+
+  override def handleRecoverOk(consumerTag: String): Unit = {}
+
+  override def handleCancelOk(consumerTag: String): Unit = {}
+
+  override def handleShutdownSignal(consumerTag: String, signal: ShutdownSignalException): Unit = {}
+
+  override def handleConsumeOk(consumerTag: String): Unit = {}
+}
+
 class QueueConnector(conf: QueueConnectorConf) {
   private var connector = connect()
 
-  def consume(consumer: Consumer): Unit = {
+  def consume(prefetchCount: Int, consumer: Consumer): Unit = {
     checkConnector()
+    connector.channel.basicQos(prefetchCount)
     connector.channel.basicConsume(conf.queueName, conf.autoAck, consumer)
   }
 
