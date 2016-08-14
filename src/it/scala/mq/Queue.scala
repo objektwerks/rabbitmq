@@ -15,7 +15,7 @@ class Queue(requestQueue: QueueConnector, responseQueue: QueueConnector) extends
         case Some(item) =>
           val id = item.getEnvelope.getDeliveryTag
           val message = new String(item.getBody, StandardCharsets.UTF_8)
-          log.debug("request: {}", id)
+          log.info("request: {}", id)
           sender ! Request(id, message)
         case None =>
           sender ! Shutdown
