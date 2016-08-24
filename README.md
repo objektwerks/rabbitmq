@@ -1,6 +1,6 @@
 RabbitMQ
 --------
->RabbitMQ feature tests using Scala and Java client API.
+>RabbitMQ connector with feature tests using Scala and Java client API.
 
 Install
 -------

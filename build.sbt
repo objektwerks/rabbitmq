@@ -1,5 +1,6 @@
 lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
-  name := "objektwerks.rabbitmq",
+  name := "rabbitmq",
+  organization := "objektwerks",
   version := "1.0",
   scalaVersion := "2.11.8",
   ivyScala := ivyScala.value map {
