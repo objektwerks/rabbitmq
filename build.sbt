@@ -7,14 +7,14 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
     _.copy(overrideScalaVersion = true)
   },
   libraryDependencies ++= {
-    val akkaVersion = "2.4.16"
+    val akkaVersion = "2.4.18"
     Seq(
       "com.typesafe" % "config" % "1.3.1",
       "com.typesafe.akka" % "akka-actor_2.12" % akkaVersion,
       "com.typesafe.akka" % "akka-slf4j_2.12" % akkaVersion,
-      "com.rabbitmq" % "amqp-client" % "4.0.2",
-      "com.iheart" % "ficus_2.12" % "1.4.0",
-      "ch.qos.logback" % "logback-classic" % "1.1.9"
+      "com.rabbitmq" % "amqp-client" % "4.1.1",
+      "com.iheart" % "ficus_2.12" % "1.4.1",
+      "ch.qos.logback" % "logback-classic" % "1.2.3"
     )
   },
   scalacOptions ++= Seq(
