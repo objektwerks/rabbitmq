@@ -2,11 +2,11 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
   name := "rabbitmq",
   organization := "objektwerks",
   version := "0.1-SNAPSHOT",
-  scalaVersion := "2.12.10",
+  scalaVersion := "2.12.11",
   libraryDependencies ++= {
     val akkaVersion = "2.4.20"
     Seq(
-      "com.typesafe" % "config" % "1.3.4",
+      "com.typesafe" % "config" % "1.4.0",
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
       "com.rabbitmq" % "amqp-client" % "5.7.3",
