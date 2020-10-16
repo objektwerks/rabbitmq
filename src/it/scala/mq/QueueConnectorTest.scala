@@ -5,12 +5,16 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor._
 import akka.util.Timeout
+
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.Envelope
 import com.typesafe.config.ConfigFactory
+
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.Await
@@ -29,7 +33,7 @@ class TestQueueConsumer(connector: QueueConnector) extends QueueConsumer(connect
   }
 }
 
-class QueueConnectorTest extends FunSuite with BeforeAndAfterAll {
+class QueueConnectorTest extends AnyFunSuite with BeforeAndAfterAll {
   val log = LoggerFactory.getLogger(this.getClass)
   implicit val timeout = Timeout(1 second)
 

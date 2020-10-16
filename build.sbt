@@ -13,22 +13,12 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
       "com.iheart" %% "ficus" % "1.5.0",
       "ch.qos.logback" % "logback-classic" % "1.2.3"
     )
-  },
-  scalacOptions ++= Seq(
-    "-language:postfixOps",
-    "-language:implicitConversions",
-    "-feature",
-    "-unchecked",
-    "-deprecation",
-    "-Xlint",
-    "-Xfatal-warnings"
-  ),
-  fork in test := true
+  }
 )
 lazy val root = (project in file(".")).
   configs(IntegrationTest).
   settings(commonSettings: _*).
   settings(Defaults.itSettings: _*).
   settings(
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.9" % "it,test"
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "it,test"
   )
