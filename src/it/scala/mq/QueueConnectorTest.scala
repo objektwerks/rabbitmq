@@ -19,8 +19,9 @@ import org.slf4j.LoggerFactory
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
-class TestQueueConsumer(connector: QueueConnector) extends QueueConsumer(connector) {
+class TestQueueConsumer(connector: QueueConnector) extends QueueConsumer {
   val log = LoggerFactory.getLogger(this.getClass)
 
   override def handleDelivery(consumerTag: String,
@@ -38,10 +39,11 @@ class QueueConnectorTest extends AnyFunSuite with BeforeAndAfterAll {
   implicit val timeout = Timeout(1 second)
 
   val system = ActorSystem.create("queue", ConfigFactory.load("test.akka.conf"))
-  val broker = system.actorOf(Props[Broker], name = "broker")
+  val broker = system.actorOf(Props[Broker](), name = "broker")
 
   override protected def afterAll(): Unit = {
     Await.result(system.terminate(), 3 seconds)
+    ()
   }
 
   test("push pull") {
@@ -82,26 +84,29 @@ class QueueConnectorTest extends AnyFunSuite with BeforeAndAfterAll {
   private def pushMessagesToRequestQueue(queue: QueueConnector, number: Int): Unit = {
     val counter = new AtomicInteger()
     val confirmed = new AtomicInteger()
-    for (i <- 1 to number) {
+    for (_ <- 1 to number) {
       val message = s"test.request: ${counter.incrementAndGet}"
       val isComfirmed = queue.push(message)
       if (isComfirmed) confirmed.incrementAndGet
     }
     assert(confirmed.intValue == number)
+    ()
   }
 
   private def pullMessagesFromRequestQueue(queue: QueueConnector, number: Int): Unit = {
     val pulled = new AtomicInteger()
-    for (i <- 1 to number) {
+    for (_ <- 1 to number) {
       if(queue.pull.nonEmpty) pulled.incrementAndGet
     }
     assert(pulled.intValue == number)
+    ()
   }
 
   private def consumeMessagesFromRequestQueue(queue: QueueConnector, number: Int, consumer: QueueConsumer): Unit = {
     val consumed = queue.consume(number, consumer)
     log.debug(s"consumer: $consumed")
     assert(queue.pull.isEmpty)
+    ()
   }
 
   private def clearQueue(queue: QueueConnector): Unit = {

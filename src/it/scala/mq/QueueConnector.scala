@@ -8,7 +8,7 @@ private[this] class Connector(val connection: Connection, val channel: Channel) 
   def close(): Unit = if (connection.isOpen) connection.close()
 }
 
-class QueueConsumer(connector: QueueConnector) extends Consumer {
+class QueueConsumer extends Consumer {
   override def handleDelivery(consumerTag: String,
                               envelope: Envelope,
                               properties: BasicProperties,
@@ -45,7 +45,7 @@ class QueueConnector(conf: QueueConnectorConf) {
   def push(message: String): Boolean = {
     checkConnector()
     connector.channel.basicPublish(conf.exchangeName, conf.routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes())
-    connector.channel.waitForConfirms(conf.publishConfirmationTimeout)
+    connector.channel.waitForConfirms(conf.publishConfirmationTimeout.toLong)
   }
 
   def ack(deliveryTag: Long): Unit = {
