@@ -1,10 +1,10 @@
 RabbitMQ
 --------
->RabbitMQ connector with feature tests using Scala and Java client API.
+>RabbitMQ connector with feature tests using Scala, Akka and RabbitMQ Java client API.
 
 Install
 -------
-1. brew install RabbitMQ
+1. brew install rabbitmq
 
 Start
 -----
@@ -19,7 +19,8 @@ Test
 1. sbt clean it:test
 >**View** the RabbitMQ Web UI at: http://http://localhost:15672/  [ user: guest, password: guest ]
 
--------
+RabbitMqCtl
+-----------
 >See rabbitmqctl @ https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
 
 1. List Queues
