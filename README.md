@@ -21,7 +21,7 @@ Test
 
 RabbitMqCtl
 -----------
->See rabbitmqctl @ https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
+>See https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
 
 1. List Queues
    * rabbitmqctl list_queues [ name messages_ready messages_unacknowledged ]
