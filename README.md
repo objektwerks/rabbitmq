@@ -23,8 +23,8 @@ Test
 >See rabbitmqctl @ https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
 
 1. List Queues
-  - rabbitmqctl list_queues name messages_ready messages_unacknowledged
+   * rabbitmqctl list_queues [ name messages_ready messages_unacknowledged ]
 2. Restart
-  - rabbitmqctl stop_app
-  - rabbitmqctl reset
-  - rabbitmqctl start_app
+   * rabbitmqctl stop_app
+   * rabbitmqctl reset
+   * rabbitmqctl start_app
