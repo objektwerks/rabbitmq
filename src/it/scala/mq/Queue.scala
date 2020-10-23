@@ -15,13 +15,13 @@ class Queue(requestQueue: QueueConnector, responseQueue: QueueConnector) extends
         case Some(item) =>
           val id = item.getEnvelope.getDeliveryTag
           val message = new String(item.getBody, StandardCharsets.UTF_8)
-          log.debug("request: {}", id)
+          log.debug("*** request: {}", id)
           sender() ! Request(id, message)
         case None =>
           sender() ! Shutdown
       }
     case Response(id, message) =>
-      log.debug("response: {}", id)
+      log.debug("*** response: {}", id)
       val wasPushed = responseQueue.push(message)
       require(wasPushed)
       requestQueue.ack(id)

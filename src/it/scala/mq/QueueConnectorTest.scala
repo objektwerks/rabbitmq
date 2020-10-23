@@ -22,89 +22,80 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class TestQueueConsumer(connector: QueueConnector) extends QueueConsumer {
-  val log = LoggerFactory.getLogger(this.getClass)
+  val logger = LoggerFactory.getLogger(getClass)
 
   override def handleDelivery(consumerTag: String,
                               envelope: Envelope,
                               properties: BasicProperties,
                               body: Array[Byte]): Unit = {
     val message = new String(body, StandardCharsets.UTF_8)
-    log.debug(s"handleDeliver: $message")
+    logger.info(s"*** handleDelivery: $message")
     connector.ackAllMessages(envelope.getDeliveryTag)
   }
 }
 
 class QueueConnectorTest extends AnyFunSuite with BeforeAndAfterAll {
-  val log = LoggerFactory.getLogger(this.getClass)
+  val logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = Timeout(1 second)
 
   val system = ActorSystem.create("queue", ConfigFactory.load("test.akka.conf"))
   val broker = system.actorOf(Props[Broker](), name = "broker")
+  val queue = new QueueConnector( ConfigFactory.load("test.queue.conf").as[QueueConnectorConf]("queue") )
+  val consumer = new TestQueueConsumer(queue)
 
   override protected def afterAll(): Unit = {
+    queue.close()
     Await.result(system.terminate(), 3 seconds)
     ()
   }
 
   test("push pull") {
-    val queueConf = ConfigFactory.load("test.queue.conf").as[QueueConnectorConf]("queue")
-    val queue = new QueueConnector(queueConf)
-    clearQueue(queue)
-    log.debug("push pull test: test rabbitmq queue cleared!")
     pushMessagesToRequestQueue(queue, 10)
     pullMessagesFromRequestQueue(queue, 10)
-    queue.close()
   }
 
   test("consume") {
-    val queueConf = ConfigFactory.load("test.queue.conf").as[QueueConnectorConf]("queue")
-    val queue = new QueueConnector(queueConf)
-    clearQueue(queue)
-    log.debug("consume test: test rabbitmq queue cleared!")
     pushMessagesToRequestQueue(queue, 10)
-    val consumer = new TestQueueConsumer(queue)
     consumeMessagesFromRequestQueue(queue, 10, consumer)
-    queue.close()
   }
 
   test("broker") {
     val requestQueue = new QueueConnector(ConfigFactory.load("test.request.queue.conf").as[QueueConnectorConf]("queue"))
-    clearQueue(requestQueue)
-    log.debug("broker test: request queue cleared!")
     pushMessagesToRequestQueue(requestQueue, 10)
     requestQueue.close()
+
     broker ! PullRequest
     Thread.sleep(1000)
+
     val responseQueue = new QueueConnector(ConfigFactory.load("test.response.queue.conf").as[QueueConnectorConf]("queue"))
     clearQueue(responseQueue)
-    log.debug("broker test: response queue cleared!")
     responseQueue.close()
   }
 
-  private def pushMessagesToRequestQueue(queue: QueueConnector, number: Int): Unit = {
+  private def pushMessagesToRequestQueue(queue: QueueConnector, count: Int): Unit = {
     val counter = new AtomicInteger()
     val confirmed = new AtomicInteger()
-    for (_ <- 1 to number) {
-      val message = s"test.request: ${counter.incrementAndGet}"
+    for (_ <- 1 to count) {
+      val message = s"message [${counter.incrementAndGet}]"
       val isComfirmed = queue.push(message)
       if (isComfirmed) confirmed.incrementAndGet
     }
-    assert(confirmed.intValue == number)
+    assert(confirmed.intValue == count)
     ()
   }
 
-  private def pullMessagesFromRequestQueue(queue: QueueConnector, number: Int): Unit = {
+  private def pullMessagesFromRequestQueue(queue: QueueConnector, count: Int): Unit = {
     val pulled = new AtomicInteger()
-    for (_ <- 1 to number) {
+    for (_ <- 1 to count) {
       if(queue.pull.nonEmpty) pulled.incrementAndGet
     }
-    assert(pulled.intValue == number)
+    assert(pulled.intValue == count)
     ()
   }
 
-  private def consumeMessagesFromRequestQueue(queue: QueueConnector, number: Int, consumer: QueueConsumer): Unit = {
-    val consumed = queue.consume(number, consumer)
-    log.debug(s"consumer: $consumed")
+  private def consumeMessagesFromRequestQueue(queue: QueueConnector, count: Int, consumer: QueueConsumer): Unit = {
+    val consumed = queue.consume(count, consumer)
+    assert(consumed.nonEmpty)
     assert(queue.pull.isEmpty)
     ()
   }
@@ -114,5 +105,6 @@ class QueueConnectorTest extends AnyFunSuite with BeforeAndAfterAll {
     while (!queueIsEmpty) {
       queueIsEmpty = queue.pull.isEmpty
     }
+    logger.info("*** Queue cleared!")
   }
 }

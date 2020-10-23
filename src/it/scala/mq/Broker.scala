@@ -1,7 +1,9 @@
 package mq
 
 import akka.actor.{Actor, ActorLogging, Props}
+
 import com.typesafe.config.ConfigFactory
+
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 
@@ -18,7 +20,7 @@ class Broker extends Actor with ActorLogging {
       queue ! response
       queue ! PullRequest
     case Shutdown =>
-      log.debug("broker shutting down...")
+      log.debug("*** Broker shutting down...")
       context stop queue
       context stop worker
       context stop self
