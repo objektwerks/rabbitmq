@@ -6,13 +6,10 @@ Install
 -------
 1. brew install rabbitmq
 
-Start
------
+Service
+-------
 1. brew services start rabbitmq
-
-Stop
-----
-1. brew services stop rabbitmq
+2. brew services stop rabbitmq
 
 Test
 ----
