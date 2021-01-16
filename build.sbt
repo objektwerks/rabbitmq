@@ -4,7 +4,7 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
   version := "0.1-SNAPSHOT",
   scalaVersion := "2.13.4",
   libraryDependencies ++= {
-    val akkaVersion = "2.6.10"
+    val akkaVersion = "2.6.11"
     Seq(
       "com.typesafe" % "config" % "1.4.0",
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
