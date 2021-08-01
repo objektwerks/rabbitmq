@@ -8,10 +8,10 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
     Seq(
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-      "com.rabbitmq" % "amqp-client" % "5.12.0",
+      "com.rabbitmq" % "amqp-client" % "5.13.0",
       "com.iheart" %% "ficus" % "1.5.0",
-      "com.typesafe" % "config" % "1.4.0",
-      "ch.qos.logback" % "logback-classic" % "1.2.3"
+      "com.typesafe" % "config" % "1.4.1",
+      "ch.qos.logback" % "logback-classic" % "1.2.5"
     )
   }
 )
