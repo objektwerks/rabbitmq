@@ -20,5 +20,5 @@ lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(Defaults.itSettings: _*).
   settings(
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "it,test"
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % "it,test"
   )
