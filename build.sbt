@@ -4,7 +4,7 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
   version := "0.1-SNAPSHOT",
   scalaVersion := "2.13.10",
   libraryDependencies ++= {
-    val akkaVersion = "2.7.0"
+    val akkaVersion = "2.6.20" // Don't upgrade due to BSL 1.1!
     Seq(
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
