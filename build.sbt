@@ -11,7 +11,7 @@ lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
       "com.rabbitmq" % "amqp-client" % "5.16.0",
       "com.iheart" %% "ficus" % "1.5.2",
       "com.typesafe" % "config" % "1.4.2",
-      "ch.qos.logback" % "logback-classic" % "1.4.8"
+      "ch.qos.logback" % "logback-classic" % "1.4.11"
     )
   }
 )
